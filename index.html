@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <title>Manuel!</title>
+  <style>canvas { border: 1px solid #999; }</style>
+</head>
+<body>
+<canvas></canvas>
+<script src="./support.js"></script>
+<script>
+var canvasEl = document.querySelector('canvas');
+var ctx = canvasEl.getContext('2d');
+
+function clearCanvas() {
+  canvasEl.width = 500;
+  canvasEl.height = 300;
+}
+
+function drawBackground() {
+  ctx.fillStyle = '#008A00';
+  ctx.fillRect(0, 250, 500, 50);
+}
+
+function processInput(state) {
+  if (dpad.right) {
+    state.pos.x += 3;
+  } else if (dpad.left) {
+    state.pos.x -= 3;
+  }
+}
+
+function drawManuel(state) {
+  var pos = state.pos;
+  ctx.fillStyle = '#AF8452';
+  ctx.fillRect(pos.x + 5, pos.y - 10, 10, 10);
+  ctx.fillStyle = '#C91B13';
+  ctx.fillRect(pos.x, pos.y, 20, 20);
+  ctx.fillRect(pos.x, pos.y + 20, 8, 10);
+  ctx.fillRect(pos.x + 12, pos.y + 20, 8, 10);
+}
+
+var state = {
+  pos: {x: 200, y: 220}  // Manuel's position.
+};
+
+window.requestAnimationFrame(function render() {
+  clearCanvas();
+  drawBackground();
+  processInput(state);
+  drawManuel(state);
+  window.requestAnimationFrame(render);
+});
+</script>
+</body>
+</html>
