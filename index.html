@@ -7,6 +7,7 @@
 <body>
 <canvas></canvas>
 <script src="./support.js"></script>
+<script src="./immutable.min.js"></script>
 <script>
 var canvasEl = document.querySelector('canvas');
 var ctx = canvasEl.getContext('2d');
@@ -16,40 +17,48 @@ function clearCanvas() {
   canvasEl.height = 300;
 }
 
-function drawBackground() {
+function drawBackground(state) {
   ctx.fillStyle = '#008A00';
   ctx.fillRect(0, 250, 500, 50);
+  return state;
 }
 
 function processInput(state) {
+  var currX = state.getIn(['pos', 'x']);
   if (dpad.right) {
-    state.pos.x += 3;
+    return state.setIn(['pos', 'x'], currX + 3);
   } else if (dpad.left) {
-    state.pos.x -= 3;
+    return state.setIn(['pos', 'x'], currX - 3);
   }
+  return state;
 }
 
 function drawManuel(state) {
-  var pos = state.pos;
+  var pos = state.get('pos');
   ctx.fillStyle = '#AF8452';
-  ctx.fillRect(pos.x + 5, pos.y - 10, 10, 10);
+  ctx.fillRect(pos.get('x') + 5, pos.get('y') - 10, 10, 10);
   ctx.fillStyle = '#C91B13';
-  ctx.fillRect(pos.x, pos.y, 20, 20);
-  ctx.fillRect(pos.x, pos.y + 20, 8, 10);
-  ctx.fillRect(pos.x + 12, pos.y + 20, 8, 10);
+  ctx.fillRect(pos.get('x'), pos.get('y'), 20, 20);
+  ctx.fillRect(pos.get('x'), pos.get('y') + 20, 8, 10);
+  ctx.fillRect(pos.get('x') + 12, pos.get('y') + 20, 8, 10);
+
+  return state;
 }
 
-var state = {
-  pos: {x: 200, y: 220}  // Manuel's position.
-};
-
-window.requestAnimationFrame(function render() {
-  clearCanvas();
-  drawBackground();
-  processInput(state);
-  drawManuel(state);
-  window.requestAnimationFrame(render);
+var initialState = Immutable.Map({
+  pos: Immutable.Map({x: 200, y: 220})  // Manuel's position.
 });
+
+window.requestAnimationFrame(function render(state) {
+  clearCanvas();
+
+  var newState =
+      drawManuel(
+      drawBackground(
+      processInput(state)));
+
+  window.requestAnimationFrame(render.bind(null, newState));
+}.bind(null, initialState));
 </script>
 </body>
 </html>
