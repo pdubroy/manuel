@@ -12,14 +12,21 @@
 var canvasEl = document.querySelector('canvas');
 var ctx = canvasEl.getContext('2d');
 
+var BOULDER_HEIGHT = 20;
+var BOULDER_WIDTH = 20;
+
 function clearCanvas() {
   canvasEl.width = 500;
   canvasEl.height = 300;
 }
 
 function drawBackground(state) {
+  var boulderPos = state.get('boulderPos');
   ctx.fillStyle = '#008A00';
   ctx.fillRect(0, 250, 500, 50);
+  ctx.fillStyle = '#ccc';
+  ctx.fillRect(boulderPos.get('x'), boulderPos.get('y'),
+               BOULDER_WIDTH, BOULDER_HEIGHT);
   return state;
 }
 
@@ -45,8 +52,19 @@ function drawManuel(state) {
   return state;
 }
 
+function handleCollisions(state) {
+  var pos = state.get('pos');
+  var boulderPos = state.get('boulderPos');
+  // If Manuel is overlapping the boulder, move him.
+  if (pos.get('x') + 20 > boulderPos.get('x')) {
+    return state.setIn(['pos', 'x'], boulderPos.get('x') - 20);
+  }
+  return state;
+}
+
 var initialState = Immutable.Map({
-  pos: Immutable.Map({x: 200, y: 220})  // Manuel's position.
+  pos: Immutable.Map({x: 200, y: 220}),  // Manuel's position.
+  boulderPos: Immutable.Map({x: 300, y: 230})
 });
 
 window.requestAnimationFrame(function render(state) {
@@ -55,7 +73,8 @@ window.requestAnimationFrame(function render(state) {
   var newState =
       drawManuel(
       drawBackground(
-      processInput(state)));
+      processInput(
+      handleCollisions(state))));
 
   window.requestAnimationFrame(render.bind(null, newState));
 }.bind(null, initialState));
