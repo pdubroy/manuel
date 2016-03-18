@@ -73,8 +73,8 @@ window.requestAnimationFrame(function render(state) {
   var newState =
       drawManuel(
       drawBackground(
-      processInput(
-      handleCollisions(state))));
+      handleCollisions(
+      processInput(state))));
 
   window.requestAnimationFrame(render.bind(null, newState));
 }.bind(null, initialState));
