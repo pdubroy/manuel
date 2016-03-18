@@ -27,17 +27,17 @@ function drawBackground(state) {
   ctx.fillStyle = '#ccc';
   ctx.fillRect(boulderPos.get('x'), boulderPos.get('y'),
                BOULDER_WIDTH, BOULDER_HEIGHT);
-  return state;
+  return [];
 }
 
 function processInput(state) {
   var currX = state.getIn(['pos', 'x']);
   if (dpad.right) {
-    return state.setIn(['pos', 'x'], currX + 3);
+    return [{op: 'setIn', path: ['pos', 'x'], value: currX + 3}];
   } else if (dpad.left) {
-    return state.setIn(['pos', 'x'], currX - 3);
+    return [{op: 'setIn', path: ['pos', 'x'], value: currX - 3}];
   }
-  return state;
+  return [];
 }
 
 function drawManuel(state) {
@@ -49,7 +49,7 @@ function drawManuel(state) {
   ctx.fillRect(pos.get('x'), pos.get('y') + 20, 8, 10);
   ctx.fillRect(pos.get('x') + 12, pos.get('y') + 20, 8, 10);
 
-  return state;
+  return [];
 }
 
 function handleCollisions(state) {
@@ -57,9 +57,20 @@ function handleCollisions(state) {
   var boulderPos = state.get('boulderPos');
   // If Manuel is overlapping the boulder, move him.
   if (pos.get('x') + 20 > boulderPos.get('x')) {
-    return state.setIn(['pos', 'x'], boulderPos.get('x') - 20);
+    return [{op: 'setIn', path: ['pos', 'x'], value: boulderPos.get('x') - 20}];
   }
-  return state;
+  return [];  // No update.
+}
+
+function applyUpdates(state, updates) {
+  return updates.reduce(function(prevState, update) {
+    switch (update.op) {
+      case 'setIn':
+        return prevState.setIn(update.path, update.value);
+      default:
+        throw new Error("Unknown op '" + update.op + "'");
+    }
+  }, state);
 }
 
 var initialState = Immutable.Map({
@@ -70,11 +81,12 @@ var initialState = Immutable.Map({
 window.requestAnimationFrame(function render(state) {
   clearCanvas();
 
-  var newState =
-      drawManuel(
-      drawBackground(
-      handleCollisions(
-      processInput(state))));
+  var updates = []
+      .concat(processInput(state))
+      .concat(handleCollisions(state))
+      .concat(drawBackground(state))
+      .concat(drawManuel(state));
+  var newState = applyUpdates(state, updates);
 
   window.requestAnimationFrame(render.bind(null, newState));
 }.bind(null, initialState));
