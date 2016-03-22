@@ -1,0 +1,13 @@
+{
+  "private": "true",
+  "author": "Patrick Dubroy <pdubroy@gmail.com> (http://dubroy.com)",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^2.4.0",
+    "eslint-plugin-html": "^1.4.0"
+  },
+  "scripts": {
+    "lint": "eslint index.html support.js"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  // To minimize dependencies on Node- or browser-specific features, leave the
+  // env empty, and instead define globals as needed.
+  "env": {},
+
+  "plugins": [
+    "eslint-plugin-html"
+  ],
+
+  "rules": {
+    // Enforce "one true brace style", allowing start and end braces to be
+    // on the same line.
+    "brace-style": [2, "1tbs", {"allowSingleLine": true}],
+
+    // Enforce the name 'self' when assigning `this` to a local variable.
+    "consistent-this": [0, "self"],
+
+    // Enforce two-space indentation.
+    "indent": [2, 2, {SwitchCase: 1}],
+
+    // Allow things like `while (true)`.
+    "no-constant-condition": 0,
+
+    // Allow variable shadowing.
+    "no-shadow": 0,
+
+    // Restrict what kind of objects can be used with 'throw'.
+    "no-throw-literal": 2,
+
+    // Disallow trailing spaces at the end of lines.
+    "no-trailing-spaces": 2,
+
+    // Allow identifiers with leading or trailing underscores.
+    "no-underscore-dangle": 0,
+
+    // Allow unused parameters, but not unused variables.
+    "no-unused-vars": [2, {"vars": "all", "args": "none"}],
+
+    // Allow functions to be used before they are defined.
+    "no-use-before-define": [2, "nofunc"],
+
+    // Use single quotes, except when escaping would be necessary.
+    "quotes": [2, "single", "avoid-escape"],
+
+    // Force IIFEs to be wrapped in parentheses.
+    "wrap-iife": [2, "inside"],
+
+    "yoda": [2, "never", {"exceptRange": true}]
+  }
+}
